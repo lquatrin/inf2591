@@ -1,7 +1,7 @@
 /**
  * The canonical "Hello, World" demo class expressed in X10
  */
-public class Hello {
+public class Main {
 
     /**
      * The main method for the Hello class
