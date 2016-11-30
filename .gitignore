@@ -6,6 +6,7 @@
 .project
 .metadata
 bin/
+bin-java/
 tmp/
 *.tmp
 *.bak
