@@ -20,6 +20,8 @@ public class Hello {
         val ar2 : Array_2[Int] = new Array_2[Int](10,10);
         
         ar2(0,0) = (10 as Int);
+        val p : Point;
+        p = [1, 2] as Point;
         Console.OUT.println("Magnitude "+ ar2(0,0));
         
         
