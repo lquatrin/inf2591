@@ -31,5 +31,11 @@ public class RDFS {
 		this.x = x; this.y = y;
 	}
 	
+	public def prints() {
+		finish for (p in Place.places()) {
+			at (p) async Console.OUT.println("Recursive Depth Search saying Hello from place "+p.id);
+		}
+	}
+	
 	public def magnitude() = x*x + y*y;	
 }
