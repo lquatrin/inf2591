@@ -81,28 +81,28 @@ public class NRDFS extends x10.core.Ref implements x10.serialization.X10JavaSeri
     public double magnitude$O() {
         
         //#line 52 "F:/GitHub/inf2591/tree_search/src/tree_search/NRDFS.x10"
-        final double t$746 = this.x;
+        final double t$100574 = this.x;
         
         //#line 52 "F:/GitHub/inf2591/tree_search/src/tree_search/NRDFS.x10"
-        final double t$747 = this.x;
+        final double t$100575 = this.x;
         
         //#line 52 "F:/GitHub/inf2591/tree_search/src/tree_search/NRDFS.x10"
-        final double t$750 = ((t$746) * (((double)(t$747))));
+        final double t$100578 = ((t$100574) * (((double)(t$100575))));
         
         //#line 52 "F:/GitHub/inf2591/tree_search/src/tree_search/NRDFS.x10"
-        final double t$748 = this.y;
+        final double t$100576 = this.y;
         
         //#line 52 "F:/GitHub/inf2591/tree_search/src/tree_search/NRDFS.x10"
-        final double t$749 = this.y;
+        final double t$100577 = this.y;
         
         //#line 52 "F:/GitHub/inf2591/tree_search/src/tree_search/NRDFS.x10"
-        final double t$751 = ((t$748) * (((double)(t$749))));
+        final double t$100579 = ((t$100576) * (((double)(t$100577))));
         
         //#line 52 "F:/GitHub/inf2591/tree_search/src/tree_search/NRDFS.x10"
-        final double t$752 = ((t$750) + (((double)(t$751))));
+        final double t$100580 = ((t$100578) + (((double)(t$100579))));
         
         //#line 52 "F:/GitHub/inf2591/tree_search/src/tree_search/NRDFS.x10"
-        return t$752;
+        return t$100580;
     }
     
     

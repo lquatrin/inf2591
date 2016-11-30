@@ -61,13 +61,13 @@ public class RDFS extends x10.core.Ref implements x10.serialization.X10JavaSeria
          {
             
             //#line 27 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-            final double t$101392 = ((double)(long)(((long)(1L))));
+            final double t$100542 = ((double)(long)(((long)(1L))));
             
             //#line 27 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-            final double t$101393 = ((double)(long)(((long)(2L))));
+            final double t$100543 = ((double)(long)(((long)(2L))));
             
             //#line 27 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-            /*this.*/tree_search$RDFS$$init$S(t$101392, t$101393);
+            /*this.*/tree_search$RDFS$$init$S(t$100542, t$100543);
         }
         return this;
     }
@@ -106,28 +106,28 @@ public class RDFS extends x10.core.Ref implements x10.serialization.X10JavaSeria
     public double magnitude$O() {
         
         //#line 34 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-        final double t$101394 = this.x;
+        final double t$100544 = this.x;
         
         //#line 34 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-        final double t$101395 = this.x;
+        final double t$100545 = this.x;
         
         //#line 34 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-        final double t$101398 = ((t$101394) * (((double)(t$101395))));
+        final double t$100548 = ((t$100544) * (((double)(t$100545))));
         
         //#line 34 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-        final double t$101396 = this.y;
+        final double t$100546 = this.y;
         
         //#line 34 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-        final double t$101397 = this.y;
+        final double t$100547 = this.y;
         
         //#line 34 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-        final double t$101399 = ((t$101396) * (((double)(t$101397))));
+        final double t$100549 = ((t$100546) * (((double)(t$100547))));
         
         //#line 34 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-        final double t$101400 = ((t$101398) + (((double)(t$101399))));
+        final double t$100550 = ((t$100548) + (((double)(t$100549))));
         
         //#line 34 "F:/GitHub/inf2591/tree_search/src/tree_search/RDFS.x10"
-        return t$101400;
+        return t$100550;
     }
     
     

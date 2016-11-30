@@ -44,10 +44,10 @@ public class TreeSearch extends x10.core.Ref implements x10.serialization.X10Jav
     public void TreeSearch() {
         
         //#line 11 "F:/GitHub/inf2591/tree_search/src/tree_search/TreeSearch.x10"
-        final x10.io.Printer t$694 = ((x10.io.Printer)(x10.io.Console.get$OUT()));
+        final x10.io.Printer t$100520 = ((x10.io.Printer)(x10.io.Console.get$OUT()));
         
         //#line 11 "F:/GitHub/inf2591/tree_search/src/tree_search/TreeSearch.x10"
-        t$694.println(((java.lang.Object)("Tree Search")));
+        t$100520.println(((java.lang.Object)("Tree Search")));
     }
     
     
