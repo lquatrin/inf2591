@@ -1,5 +1,7 @@
 package tree_search;
-
+import x10.util.Stack;
+import x10.array.Array;
+import tree_search.RDFS;
 /*
  * for (city = n!1; city >= 1; city!!)
  *   Push(stack, city);
@@ -41,13 +43,68 @@ package tree_search;
  *   Free tour(curr tour);
  * }
  */
-   
+
+
+
+
+
 public class NRDFS {
-	public val x: Double;
-	public val y: Double;
-	public def this(x: Double, y: Double) {
-		this.x = x; this.y = y;
+
+	public val size: Int;
+	
+	public val pilha:Stack[Tour] = new Stack[Tour]();
+	//public var tour:Array[Int];
+	public def this(size:Int) {
+	  this.size = size;
+	  curr_tour = new Tour();
 	}
 	
-	public def magnitude() = x*x + y*y;	
+	public def BestTour(t_tour:Tour): Boolean{
+		
+		return false;
+	}
+	
+	public def CityCount(t_tour:Tour):Int{
+		
+		return 0;
+	}
+	
+	public def Removelastcity(t_tour:Tour){
+		
+		
+	}
+	
+	public def Feasible(t_tour:Tour,i:Int):Boolean{
+		
+		return false;
+	}
+	
+	public def AddCity(t_tour:Tour,i:Int){
+		
+	}
+	
+	public def Search(){
+		/**
+		 *To do
+		while(!pilha.isEmpty()){
+			curr_tour = pilha.pop();
+			if (CityCount(curr_tour)==size){
+				if(BestTour(curr_tour)){
+					
+				}
+			}
+			else{
+				
+				for (i in (size-1)..0){
+					   if (Feasible(curr_tour, i)) {
+						  Addcity(curr_tour, i);
+						  pilha.push(curr_tour);
+						  Removelastcity(curr_tour);
+						}
+				}
+			}
+		}**/	
+	}
+	
+
 }

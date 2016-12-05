@@ -26,15 +26,19 @@ import tree_search.RDFS;
 import x10.array.Array;
 import x10.array.Array_2;
 import x10.compiler.Foreach;
-
 import x10.io.File;
 import x10.io.Console;
 import x10.io.IOException;
-
 import x10.compiler.*;
+import x10.io.FileReader;
+import x10.io.Reader;
+import x10.util.StringBuilder;
 
 public class Hello {
-
+	
+	private val size:Int;
+	private val dist:Array_2[Int];
+		
 	// Use native code in all backends:
 	//@Native("c++","printf(\"Hello World!\\n\")")
 	@Native("java","System.out.println(\"Hello World!\")")
@@ -61,13 +65,49 @@ public class Hello {
     /**
      * The main method for the Hello class
      */
+	
+	
+	//Leitura dos dados
+	
+	def this(r:Reader) throws Exception{
+		size = nextInt(r);
+		dist =  new Array_2[Int](size,size);
+		for (i in 0..(size-1)){ 
+			for ( j in 0..(size-1)) 
+				dist(i,j) = nextInt(r);
+		}
+	}
+	
+	private static def nextInt(r:Reader){
+		val sb = new StringBuilder();
+		var skip_white:Boolean = true;
+		while(r.available()!=0){
+			val c = r.read() as Char;
+			if (skip_white && c.isWhitespace())
+				continue;
+			if (c.isDigit())  {
+				sb.add(c);
+				skip_white = false;
+			} else
+				break;
+		}
+		
+		return Int.parse(sb.toString());
+	}
+	
+	
+	
     public static def main(args:Rail[String]) {
-        finish for (p in Place.places()) {
+        
+    	val f = new File("./map20.txt");
+    	val fr = new FileReader(f);
+    	
+    	finish for (p in Place.places()) {
             at (p) async Console.OUT.println("Hello World Tree Search from place "+p.id);
         }
 
         val ar2 : Array_2[Int] = new Array_2[Int](10,10);
-        
+     
         ar2(0,0) = (10 as Int);
         val p : Point;
         p = [1, 2] as Point;
@@ -94,22 +134,7 @@ public class Hello {
 	        }
         } catch (IOException) { }
         
-        /*
-        val input = new File(inputFileName);
-        val output = new File(outputFileName);
-        val p = output.printer();
-        for (line in input.lines()) {
-        	p.println(line);
-        }
-        p.flush();
-        */
-        
-        /*val inp = input.openRead();
-        Console.OUT.println(inp.lines().next());
-        while (inp.available() > 0)
-        {
-        	Console.OUT.println(inp.readLine());
-        }*/
+      
         Console.OUT.println("Finished");
     }
 
