@@ -1,6 +1,7 @@
 package tree_search;
 import x10.util.Stack;
-import x10.array.Array;
+import x10.array.*;
+import x10.lang.Int;
 import tree_search.RDFS;
 /*
  * for (city = n!1; city >= 1; city!!)
@@ -50,61 +51,71 @@ import tree_search.RDFS;
 
 public class NRDFS {
 
-	public val size: Int;
+	private val size: Int;
 	
 	public val pilha:Stack[Tour] = new Stack[Tour]();
-	//public var tour:Array[Int];
-	public def this(size:Int) {
+	private val listofvisited:Array_1[Int];
+	private val distMatrix:Array_2[Int];
+	private val Bestcost:Int;
+	
+	public def this(size:Int,matrix:Array_2[Int]) {
 	  this.size = size;
-	  curr_tour = new Tour();
+	  distMatrix = matrix;
+	  listofvisited = new Array_1[Int](size as Long);
+	  for (i in 0..(size-1)){ 
+		  listofvisited(i) = 0 as Int;
+	  }
+	  Bestcost = Int.MAX_VALUE;
 	}
 	
-	public def BestTour(t_tour:Tour): Boolean{
+	private def BestTour(t_tour:Tour): Boolean{	
+		return false;
+	}
+	
+	private def CityCount(t_tour:Tour):Int{
+		
+		return  0 as Int;
+	}
+	
+	private def Removelastcity(t_tour:Tour){
+		
+		
+	}
+	
+	private def Feasible(t_tour:Tour,i:Int):Boolean{
 		
 		return false;
 	}
 	
-	public def CityCount(t_tour:Tour):Int{
-		
-		return 0;
-	}
-	
-	public def Removelastcity(t_tour:Tour){
-		
+	private def AddCity(t_tour:Tour,i:Int){
 		
 	}
 	
-	public def Feasible(t_tour:Tour,i:Int):Boolean{
+	private def UpdateBestTour(t_tour:Tour){
 		
-		return false;
+		
 	}
 	
-	public def AddCity(t_tour:Tour,i:Int){
-		
-	}
 	
 	public def Search(){
-		/**
-		 *To do
 		while(!pilha.isEmpty()){
+			val curr_tour:Tour;
 			curr_tour = pilha.pop();
 			if (CityCount(curr_tour)==size){
 				if(BestTour(curr_tour)){
-					
+					UpdateBestTour(curr_tour);
 				}
 			}
 			else{
-				
 				for (i in (size-1)..0){
-					   if (Feasible(curr_tour, i)) {
-						  Addcity(curr_tour, i);
+					   if (Feasible(curr_tour, i as Int)) {
+						  AddCity(curr_tour, i as Int);
 						  pilha.push(curr_tour);
 						  Removelastcity(curr_tour);
 						}
 				}
 			}
-		}**/	
+		}
 	}
 	
-
 }
