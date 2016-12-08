@@ -1,5 +1,8 @@
 # x10_tutorial
 
+package "examples" contains some source code that i found on the internet (didn't remember where i found it).
+
+
 To Run the x10 project:
 1 - Run x10dt
 2 - Create New x10 Project (Java back-end) with:
@@ -11,3 +14,4 @@ To Run the x10 project:
 5 - Add Folders in "Source" tab:
 	src-java
 	x10-gen-src
+	
