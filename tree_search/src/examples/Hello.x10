@@ -3,7 +3,6 @@ import x10.io.Console;
 
 public class Hello {                             // class
   protected val n:Long;                          // field
-
   public def this(n:Long) { this.n = n; }        // constructor
 
   public def test() = n > 0;                     // method

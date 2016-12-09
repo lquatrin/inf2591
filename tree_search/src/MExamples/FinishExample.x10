@@ -12,6 +12,22 @@ public class FinishExample {
 		Console.OUT.println("task3");
 	}
 	
+	public def taskNoReturn ()
+	{
+		Console.OUT.println("Ma Task");
+	}
+	
+	public def taskReturn ()
+	{
+		return 0;
+	}
+	
+	//public def taskNoReturn ()
+	//{
+	//	Console.OUT.println("Ma Task");
+	//}
+	
+	
 	public static def main(Rail[String]) {
 		finish{
 			async task1();
