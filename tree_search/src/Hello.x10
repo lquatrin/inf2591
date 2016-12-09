@@ -22,6 +22,9 @@
  * 
  */
 import tree_search.RDFS;
+import tree_search.NRDFS;
+import tree_search.Tour;
+
 
 import x10.array.Array;
 import x10.array.Array_2;
@@ -33,6 +36,7 @@ import x10.compiler.*;
 import x10.io.FileReader;
 import x10.io.Reader;
 import x10.util.StringBuilder;
+import x10.util.*;
 
 public class Hello {
 	
@@ -95,19 +99,39 @@ public class Hello {
 		return Int.parse(sb.toString());
 	}
 	
-	
+	def solve(){
+		finish for (p in Place.places()) {
+			at (p) async {
+				Console.OUT.println("Hello World Tree Search from place "+p.id);
+				var search:NRDFS = new NRDFS(size,dist);
+				var str:String = "|\t";
+				Console.OUT.println("Just print the table");
+				for(i in 0 .. (size-1)){
+					for(j in 0..(size-1)){
+						str+= dist(i,j) + "\t";
+					}
+					Console.OUT.println(str + "|");
+					str = "|\t";
+				}
+				var mArray:ArrayList[Int] = new ArrayList[Int]();
+				mArray.add(0 as Int);
+				mArray.add((p.id+1) as Int);
+				var tour:Tour = new Tour(mArray,size);
+				search.addTour(tour);
+				search.Solve();
+			}
+		}
+	}
 	
     public static def main(args:Rail[String]) {
         
-    	val f = new File("./map20.txt");
+    	val f = new File("./map4.txt");
     	val fr = new FileReader(f);
+    	var tsp:Hello = new Hello(fr);
+    	tsp.solve();
     	
-    	finish for (p in Place.places()) {
-            at (p) async Console.OUT.println("Hello World Tree Search from place "+p.id);
-        }
-
+    	/*
         val ar2 : Array_2[Int] = new Array_2[Int](10,10);
-     
         ar2(0,0) = (10 as Int);
         val p : Point;
         p = [1, 2] as Point;
@@ -133,7 +157,7 @@ public class Hello {
 	        	Console.OUT.println(line);
 	        }
         } catch (IOException) { }
-        
+        */
       
         Console.OUT.println("Finished");
     }
