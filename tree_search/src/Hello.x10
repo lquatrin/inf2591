@@ -52,32 +52,45 @@ public class Hello {
 	def solve(){
 		val besttour = new GlobalRef[Array_1[Int]](new Array_1[Int](size));
 		val result = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
+		
+		val tour_blocks = new DistArray_Block_1[Long](size - 1, (i:Long)=>(i + 1) as Long);
+
 		finish for (p in Place.places()) {
 			at (p) async {
-				var search:NRDFS = new NRDFS(size,dist);
-				var mArray:ArrayList[Int] = new ArrayList[Int]();
-				mArray.add(0 as Int);
-				mArray.add((p.id+1) as Int);
-				var tour:Tour = new Tour(mArray,size);
-				search.addTour(tour);
-				search.Solve();
-				
-				//Pega o melhor Tour de cada place
-				val myTourFinalRes = search.GetBestTourListOfNodes();
-				val myFinalResult = search.GetBestCost();
-				//Chama uma funcao no place 0 e tenta setar a nova melhor rota
-				at(result.home){
-					val v = myFinalResult;
-					atomic{
-						if (v < result()()) {
-							//Valor
-							result().set(v);
-							//Rota
-							for(i in 0 .. (size-1)){
-								besttour()(i) = myTourFinalRes(i);					
+				for(id in tour_blocks.localIndices()) 
+				{
+					var search:NRDFS = new NRDFS(size,dist);
+					var mArray:ArrayList[Int] = new ArrayList[Int]();
+					mArray.add(0 as Int);
+					mArray.add((tour_blocks(id)) as Int);
+					
+					Console.OUT.println(here.id + " " + mArray);
+					
+					var tour:Tour = new Tour(mArray,size);
+					search.addTour(tour);
+					search.Solve();
+					
+					//Pega o melhor Tour de cada place
+					val myTourFinalRes = search.GetBestTourListOfNodes();
+					val myFinalResult = search.GetBestCost();
+					
+					Console.OUT.println(here.id + " " + myFinalResult);
+					
+					//Chama uma funcao no place 0 e tenta setar a nova melhor rota
+					at(result.home){
+						val v = myFinalResult;
+						val ar : ArrayList[Int] = myTourFinalRes;
+						atomic{
+							if (v < result()()) {
+								//Valor
+								result().set(v);
+								//Rota
+								for(i in 0 .. (size-1)){
+									besttour()(i) = ar(i);					
+								}
 							}
-						}
-					}	
+						}	
+					}
 				}
 			}	
 		}
@@ -87,14 +100,52 @@ public class Hello {
 	}
 	
     public static def main(args:Rail[String]) {
-        
-    	val f = new File("./map4.txt");
+     	val f = new File("./map8.txt");
     	val fr = new FileReader(f);
     	var tsp:Hello = new Hello(fr);
     	tsp.solve();
       
        // Console.OUT.println("Finished");
     }
+    
+    def solveWithGlobalRefAndAtomic ()
+    {
+    	val besttour = new GlobalRef[Array_1[Int]](new Array_1[Int](size));
+    	val result = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
+    	finish for (p in Place.places()) {
+    		at (p) async {
+    			var search:NRDFS = new NRDFS(size,dist);
+    			var mArray:ArrayList[Int] = new ArrayList[Int]();
+    			mArray.add(0 as Int);
+    			mArray.add((p.id+1) as Int);
+    			var tour:Tour = new Tour(mArray,size);
+    			search.addTour(tour);
+    			search.Solve();
+    			
+    			//Pega o melhor Tour de cada place
+    			val myTourFinalRes = search.GetBestTourListOfNodes();
+    			val myFinalResult = search.GetBestCost();
+    			//Chama uma funcao no place 0 e tenta setar a nova melhor rota
+    			at(result.home){
+    				val v = myFinalResult;
+    				atomic{
+    					if (v < result()()) {
+    						//Valor
+    						result().set(v);
+    						//Rota
+    						for(i in 0 .. (size-1)){
+    							besttour()(i) = myTourFinalRes(i);					
+    						}
+    					}
+    				}	
+    			}
+    		}	
+    	}
+    	//Imprimir a menor rota
+    	Console.OUT.println("Best Cost: " + result()());
+    	Console.OUT.println("Best Tour: " + besttour());
+    }
+    
     
     def solveWithReducer()
     {
