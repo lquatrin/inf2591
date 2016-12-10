@@ -65,6 +65,7 @@ public class Hello {
 				//Pega o melhor Tour de cada place
 				val myTourFinalRes = search.GetBestTourListOfNodes();
 				val myFinalResult = search.GetBestCost();
+				//Chama uma funcao no place 0 e tenta setar a nova melhor rota
 				at(result.home){
 					val v = myFinalResult;
 					atomic{
