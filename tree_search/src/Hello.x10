@@ -50,33 +50,30 @@ public class Hello {
 	}
 	
 	def solve(){
-		
-		val result = finish(Reducible.MinReducer[Long](Long.MAX_VALUE)) {
-			for (p in Place.places()) {
-				at (p) async {
-					//Console.OUT.println("Hello World Tree Search from place "+p.id);
-					var search:NRDFS = new NRDFS(size,dist);
-					var str:String = "|\t";
-					//Console.OUT.println("Just print the table");
-					for(i in 0 .. (size-1)){
-						for(j in 0..(size-1)){
-							str+= dist(i,j) + "\t";
-						}
-						//Console.OUT.println(str + "|");
-						str = "|\t";
-					}
-					var mArray:ArrayList[Int] = new ArrayList[Int]();
-					mArray.add(0 as Int);
-					mArray.add((p.id+1) as Int);
-					var tour:Tour = new Tour(mArray,size);
-					search.addTour(tour);
-					search.Solve();
-					
-					offer search.GetBestCost();
-				}	
-			}
-		};
-		Console.OUT.println("Best Cost: " + result);
+		val result = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
+		finish for (p in Place.places()) {
+			at (p) async {
+				var search:NRDFS = new NRDFS(size,dist);
+				var mArray:ArrayList[Int] = new ArrayList[Int]();
+				mArray.add(0 as Int);
+				mArray.add((p.id+1) as Int);
+				var tour:Tour = new Tour(mArray,size);
+				search.addTour(tour);
+				search.Solve();
+				
+				val myFinalResult = search.GetBestCost();
+				at(result.home){
+					val v = myFinalResult;
+					atomic{
+						if (v < result()())
+						{
+							result().set(v);
+						}	
+					}	
+				}
+			}	
+		}
+		Console.OUT.println("Best Cost: " + result()());
 	}
 	
     public static def main(args:Rail[String]) {
@@ -88,5 +85,33 @@ public class Hello {
       
        // Console.OUT.println("Finished");
     }
-
+    
+    def solveWithReducer()
+    {
+    	val result = finish(Reducible.MinReducer[Long](Long.MAX_VALUE)) {
+    	for (p in Place.places()) {
+    		at (p) async {
+    	 	//Console.OUT.println("Hello World Tree Search from place "+p.id);
+    		var search:NRDFS = new NRDFS(size,dist);
+    	 	var str:String = "|\t";
+    	 	//Console.OUT.println("Just print the table");
+    	 	for(i in 0 .. (size-1)){
+    	 		for(j in 0..(size-1)){
+    	 			str+= dist(i,j) + "\t";
+    	 		}
+    	 		//Console.OUT.println(str + "|");
+    	 		str = "|\t";
+    	 	}
+    	 	var mArray:ArrayList[Int] = new ArrayList[Int]();
+    	 	mArray.add(0 as Int);
+    	 	mArray.add((p.id+1) as Int);
+    	 	var tour:Tour = new Tour(mArray,size);
+    	 	search.addTour(tour);
+    	 	search.Solve();
+    	 	
+    	 	offer search.GetBestCost();
+   			}	
+   		}
+   		};
+    }
 }
