@@ -97,27 +97,26 @@ public class Hello {
 					}
 					Console.OUT.println(here.id + " " + myFinalResult);
 					
-				}
-				//Calls an atomic block at GlobalRef's home place to check if
-				// we found a new best Tour
-				
-				val amfr : Long = myFinalResult;
-				val amtfr : ArrayList[Int] = myTourFinalRes;
-				at(result.home){
-					val v : Long = amfr;
-					val ar : ArrayList[Int] = amtfr;
-					atomic{
-						if (v < result()()) {
-							//Best Tour Cost
-							result().set(v);
-							//Best Tour
-							for(i in 0 .. (size-1)){
-								besttour()(i) = ar(i);					
+					//Calls an atomic block at GlobalRef's home place to check if
+					// we found a new best Tour
+					val amfr : Long = myFinalResult;
+					val amtfr : ArrayList[Int] = myTourFinalRes;
+					at(result.home){
+						val v : Long = amfr;
+						val ar : ArrayList[Int] = amtfr;
+						atomic{
+							if (v < result()()) {
+								//Best Tour Cost
+								result().set(v);
+								//Best Tour
+								for(i in 0 .. (size-1)){
+									besttour()(i) = ar(i);					
+								}
 							}
-						}
-					}	
-				}
-			}	
+						}	
+					}
+				}	
+			}				
 		}
 		//Return the best tour
 		var ret_tour : Array_1[Int] = new Array_1[Int](besttour());
