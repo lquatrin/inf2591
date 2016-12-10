@@ -50,6 +50,7 @@ public class Hello {
 	}
 	
 	def solve(){
+		val besttour = new GlobalRef[Array_1[Int]](new Array_1[Int](size));
 		val result = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
 		finish for (p in Place.places()) {
 			at (p) async {
@@ -61,6 +62,7 @@ public class Hello {
 				search.addTour(tour);
 				search.Solve();
 				
+				val myTourFinalRes = search.GetBestTourListOfNodes();
 				val myFinalResult = search.GetBestCost();
 				at(result.home){
 					val v = myFinalResult;
@@ -68,12 +70,17 @@ public class Hello {
 						if (v < result()())
 						{
 							result().set(v);
+						
+							for(i in 0 .. (size-1)){
+								besttour()(i) = myTourFinalRes(i);					
+							}
 						}	
 					}	
 				}
 			}	
 		}
 		Console.OUT.println("Best Cost: " + result()());
+		Console.OUT.println("Best Tour: " + besttour());
 	}
 	
     public static def main(args:Rail[String]) {

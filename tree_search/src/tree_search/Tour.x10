@@ -18,6 +18,10 @@ public class Tour {
 		this.listofvisited(listofnodes(1) as Int)= 1 as Int;
 	}
 	
+	public def GetListOfNodes () : ArrayList[Int] {
+		return listofnodes;
+	}
+	
 	public def AddNode(ind:Int){
 		listofnodes.add(ind);
 		//PrintTour();

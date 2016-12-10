@@ -65,6 +65,11 @@ public class NRDFS {
 		return Bestcost + distMatrix(id, 0);
 	}
 	
+	public def GetBestTourListOfNodes () : ArrayList[Int]
+	{
+		return BestTour.GetListOfNodes();
+	}
+	
 	public def this(size:Int,matrix:Array_2[Int]) {
 	  this.size = size;
 	  distMatrix = matrix;
