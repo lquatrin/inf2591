@@ -73,6 +73,9 @@ public class Hello {
 		finish for (p in Place.places()) {
 			at (p) async {
 				var search:NRDFS = new NRDFS(size,dist);
+				var myFinalResult : Long = Long.MAX_VALUE;
+				var myTourFinalRes : ArrayList[Int] = new ArrayList[Int](size);
+				
 				//Each localIndice
 				for(id in tour_blocks.localIndices()) 
 				{
@@ -87,27 +90,32 @@ public class Hello {
 					search.Solve();
 					
 					//Get the best Tour after NRDFS
-					val myTourFinalRes = search.GetBestTourListOfNodes();
-					val myFinalResult = search.GetBestCost();
-					
-					//Console.OUT.println(here.id + " " + myFinalResult);
-					
-					//Calls an atomic block at GlobalRef's home place to check if
-					// we found a new best Tour
-					at(result.home){
-						val v : Long = myFinalResult;
-						val ar : ArrayList[Int] = myTourFinalRes;
-						atomic{
-							if (v < result()()) {
-								//Best Tour Cost
-								result().set(v);
-								//Best Tour
-								for(i in 0 .. (size-1)){
-									besttour()(i) = ar(i);					
-								}
-							}
-						}	
+					if (search.GetBestCost() < myFinalResult)
+					{
+						myTourFinalRes = search.GetBestTourListOfNodes();
+						myFinalResult = search.GetBestCost();
 					}
+					Console.OUT.println(here.id + " " + myFinalResult);
+					
+				}
+				//Calls an atomic block at GlobalRef's home place to check if
+				// we found a new best Tour
+				
+				val amfr : Long = myFinalResult;
+				val amtfr : ArrayList[Int] = myTourFinalRes;
+				at(result.home){
+					val v : Long = amfr;
+					val ar : ArrayList[Int] = amtfr;
+					atomic{
+						if (v < result()()) {
+							//Best Tour Cost
+							result().set(v);
+							//Best Tour
+							for(i in 0 .. (size-1)){
+								besttour()(i) = ar(i);					
+							}
+						}
+					}	
 				}
 			}	
 		}
@@ -117,7 +125,7 @@ public class Hello {
 	}
 	
     public static def main(args:Rail[String]) {
-    	val f = new File("./sp11_dist.txt");
+    	val f = new File("./uk12_dist.txt");
     	val fr = new FileReader(f);
     	var tsp:Hello = new Hello(fr);
     	
