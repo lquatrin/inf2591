@@ -46,10 +46,6 @@ import x10.util.*;
  * }
  */
 
-
-
-
-
 public class NRDFS {
 
 	private val size: Int;
@@ -60,18 +56,27 @@ public class NRDFS {
 	private var Bestcost:Int;
 	private var BestTour:Tour;
 	
+	public def GetBestCost () : Long
+	{
+		var List:ArrayList[Int] = BestTour.GetList();
+		
+		var id : Int = 0 as Int;
+		id = (List.size() - 1) as Int;
+		return Bestcost + distMatrix(id, 0);
+	}
+	
 	public def this(size:Int,matrix:Array_2[Int]) {
 	  this.size = size;
 	  distMatrix = matrix;
 	  Bestcost = Int.MAX_VALUE;
 	}
-	
+		
 	private def BestTour(t_tour:Tour): Boolean{	
 		var value:Int = 0 as Int;
 		var List:ArrayList[Int] = t_tour.GetList();
 		
-		Console.OUT.println("print tour");
-		t_tour.PrintTour();
+		//Console.OUT.println("print tour");
+		//t_tour.PrintTour();
 		
 		for(i in 0 .. (List.size()-2)) {
 			var x:Int = List.get(i);
@@ -126,9 +131,9 @@ public class NRDFS {
 	public def Solve(){
 		while(!pilha.isEmpty()){
 			var curr_tour:Tour = pilha.pop();
-			Console.OUT.println("size " + CityCount(curr_tour));
+			//Console.OUT.println("size " + CityCount(curr_tour));
 			if (CityCount(curr_tour) == (size) as Int){
-				Console.OUT.println("try to catch best");
+				//Console.OUT.println("try to catch best");
 				if(BestTour(curr_tour)){
 				  UpdateBestTour(curr_tour);
 				}
@@ -146,8 +151,8 @@ public class NRDFS {
 			}
 		}
 		
-		Console.OUT.println("print best tour");
-		BestTour.PrintTour();
+		//Console.OUT.println("print best tour");
+		//BestTour.PrintTour();
 	}
 	
 	public static def main(Rail[String]) {

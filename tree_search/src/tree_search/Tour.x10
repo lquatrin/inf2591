@@ -20,7 +20,7 @@ public class Tour {
 	
 	public def AddNode(ind:Int){
 		listofnodes.add(ind);
-		PrintTour();
+		//PrintTour();
 	}
 	
 	public def GetSize():Long{
