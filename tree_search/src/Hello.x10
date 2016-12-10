@@ -64,7 +64,7 @@ public class Hello {
 					mArray.add(0 as Int);
 					mArray.add((tour_blocks(id)) as Int);
 					
-					Console.OUT.println(here.id + " " + mArray);
+					//Console.OUT.println(here.id + " " + mArray);
 					
 					var tour:Tour = new Tour(mArray,size);
 					search.addTour(tour);
@@ -74,7 +74,7 @@ public class Hello {
 					val myTourFinalRes = search.GetBestTourListOfNodes();
 					val myFinalResult = search.GetBestCost();
 					
-					Console.OUT.println(here.id + " " + myFinalResult);
+					//Console.OUT.println(here.id + " " + myFinalResult);
 					
 					//Chama uma funcao no place 0 e tenta setar a nova melhor rota
 					at(result.home){
@@ -100,12 +100,17 @@ public class Hello {
 	}
 	
     public static def main(args:Rail[String]) {
-     	val f = new File("./map8.txt");
+     	val f = new File("./map4.txt");
     	val fr = new FileReader(f);
     	var tsp:Hello = new Hello(fr);
-    	tsp.solve();
+    	
+    	var start_time : Long = System.currentTimeMillis();
       
-       // Console.OUT.println("Finished");
+      	tsp.solve();
+
+      	var finish_time : Long = System.currentTimeMillis();
+      	
+        Console.OUT.println("Finished in " + (finish_time - start_time) + " miliseconds");
     }
     
     def solveWithGlobalRefAndAtomic ()

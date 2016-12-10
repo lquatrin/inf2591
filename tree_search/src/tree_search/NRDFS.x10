@@ -59,10 +59,14 @@ public class NRDFS {
 	public def GetBestCost () : Long
 	{
 		var List:ArrayList[Int] = BestTour.GetList();
-		
 		var id : Int = 0 as Int;
-		id = (List.size() - 1) as Int;
-		return Bestcost + distMatrix(id, 0);
+		id = List((List.size() - 1)) as Int;
+		
+		//Console.OUT.println(here.id + " " + BestTour.GetList() + " " + Bestcost + " " +  (Bestcost + distMatrix(id, 0)));
+		
+		var final_cost : Long = (Bestcost as Long) + (distMatrix(id, 0) as Long);
+		
+		return final_cost;
 	}
 	
 	public def GetBestTourListOfNodes () : ArrayList[Int]
