@@ -3,16 +3,40 @@ import x10.array.*;
 import x10.util.*;
 
 public class Tour {
-	private val listofnodes:ArrayList[Int];
-	private var listofvisited:Array_1[Int];
+	private var listofnodes:ArrayList[Int];
+	private var listofvisited:ArrayList[Int];
 	private var size:Int;
 	
-	private var curr_cost : Long;
+	public var curr_cost : Long;
+	
+	public def Copy (tr : Tour)
+	{
+		this.listofnodes = new ArrayList[Int](tr.GetSize() as Int);
+		for (i in 0..(tr.GetSize() - 1) as Int)
+		{
+			this.listofnodes.add(tr.GetCityNode(i as Int));
+		}
+		
+		for (i in 0..(size-1)){
+			this.listofvisited(i) = tr.GetNodeVisited(i as Int);
+		}
+		this.curr_cost = tr.GetCurrCost();
+	}
+	
+	public def this(valor:Int) {
+		this.listofnodes = new ArrayList[Int]();
+		this.size = valor;
+		this.listofvisited = new ArrayList[Int](size as Long);
+		for (i in 0..(size-1)){ 
+			this.listofvisited(i) = -1 as Int;
+		}
+    	this.curr_cost = 0 as Long;
+	}
 	
 	public def this(nodes:ArrayList[Int],valor:Int) {
 		this.listofnodes = nodes;
 		this.size = valor;
-		this.listofvisited = new Array_1[Int](size as Long);
+		this.listofvisited = new ArrayList[Int](size as Long);
 		for (i in 0..(size-1)){ 
 			this.listofvisited(i) = -1 as Int;
 		}
