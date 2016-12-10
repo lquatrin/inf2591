@@ -62,23 +62,26 @@ public class Hello {
 				search.addTour(tour);
 				search.Solve();
 				
+				//Pega o melhor Tour de cada place
 				val myTourFinalRes = search.GetBestTourListOfNodes();
 				val myFinalResult = search.GetBestCost();
+				//Chama uma fun��o no place 0 e tenta setar a nova melhor rota
 				at(result.home){
 					val v = myFinalResult;
 					atomic{
-						if (v < result()())
-						{
+						if (v < result()()) {
+							//Valor
 							result().set(v);
-						
+							//Rota
 							for(i in 0 .. (size-1)){
 								besttour()(i) = myTourFinalRes(i);					
 							}
-						}	
+						}
 					}	
 				}
 			}	
 		}
+		//Imprimir a menor rota
 		Console.OUT.println("Best Cost: " + result()());
 		Console.OUT.println("Best Tour: " + besttour());
 	}
