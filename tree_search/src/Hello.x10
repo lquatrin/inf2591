@@ -95,36 +95,37 @@ public class Hello {
 						myTourFinalRes = search.GetBestTourListOfNodes();
 						myFinalResult = search.GetBestCost();
 					}
-					Console.OUT.println(here.id + " " + myFinalResult);
-					
-					//Calls an atomic block at GlobalRef's home place to check if
-					// we found a new best Tour
-					val amfr : Long = myFinalResult;
-					val amtfr : ArrayList[Int] = myTourFinalRes;
-					at(result.home){
-						val v : Long = amfr;
-						val ar : ArrayList[Int] = amtfr;
-						atomic{
-							if (v < result()()) {
-								//Best Tour Cost
-								result().set(v);
-								//Best Tour
-								for(i in 0 .. (size-1)){
-									besttour()(i) = ar(i);					
-								}
-							}
-						}	
-					}
+					Console.OUT.println(here.id + " " + myFinalResult);	
 				}	
+				
+				//Calls an atomic block at GlobalRef's home place to check if
+				// we found a new best Tour
+				val amfr : Long = myFinalResult;
+				val amtfr : ArrayList[Int] = myTourFinalRes;
+				at(result.home){
+					val v : Long = amfr;
+					val ar : ArrayList[Int] = amtfr;
+					atomic{
+						if (v < result()()) {
+							//Best Tour Cost
+							result().set(v);
+							//Best Tour
+							for(i in 0 .. (size-1)){
+								besttour()(i) = ar(i);					
+							}
+						}
+					}	
+				}
 			}				
 		}
+		
 		//Return the best tour
 		var ret_tour : Array_1[Int] = new Array_1[Int](besttour());
 		return ret_tour;
 	}
 	
     public static def main(args:Rail[String]) {
-    	val f = new File("./uk12_dist.txt");
+    	val f = new File("./lau15_dist.txt");
     	val fr = new FileReader(f);
     	var tsp:Hello = new Hello(fr);
     	
