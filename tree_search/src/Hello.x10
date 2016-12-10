@@ -144,8 +144,7 @@ public class Hello {
         { 
         	Console.OUT.print(result(i) + ", ");
         }
-        Console.OUT.print("0
-        		]\n");
+        Console.OUT.print("0]\n");
         Console.OUT.println("Best Cost: " + best_tour_cost); 
     }
     
