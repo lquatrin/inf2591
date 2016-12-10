@@ -83,10 +83,7 @@ public class NRDFS {
 	private def BestTour(t_tour:Tour): Boolean{	
 		var value:Int = 0 as Int;
 		var List:ArrayList[Int] = t_tour.GetList();
-		
-		//Console.OUT.println("print tour");
-		//t_tour.PrintTour();
-		
+
 		for(i in 0 .. (List.size()-2)) {
 			var x:Int = List.get(i);
 			var y:Int = List.get(i+1);
