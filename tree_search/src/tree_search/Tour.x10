@@ -7,6 +7,8 @@ public class Tour {
 	private var listofvisited:Array_1[Int];
 	private var size:Int;
 	
+	private var curr_cost : Long;
+	
 	public def this(nodes:ArrayList[Int],valor:Int) {
 		this.listofnodes = nodes;
 		this.size = valor;
@@ -16,8 +18,20 @@ public class Tour {
 		}
 		this.listofvisited(0 as Int) = 1 as Int;
 		this.listofvisited(listofnodes(1) as Int)= 1 as Int;
+		
+		this.curr_cost = 0 as Long;
+	}
+
+	public def SetCurrCost (v : Long)
+	{
+		this.curr_cost = v;
 	}
 	
+	public def GetCurrCost () : Long
+	{
+		return this.curr_cost;
+	}
+		
 	public def GetListOfNodes () : ArrayList[Int] {
 		return listofnodes;
 	}
@@ -33,6 +47,10 @@ public class Tour {
 	
 	public def RemoveNode(){
 		listofnodes.removeLast();
+	}
+	
+	public def GetCityNode (i:Int) : Int {
+		return listofnodes(i);
 	}
 	
 	public def GetList():ArrayList[Int]{

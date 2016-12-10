@@ -72,15 +72,16 @@ public class Hello {
 
 		finish for (p in Place.places()) {
 			at (p) async {
+				var search:NRDFS = new NRDFS(size,dist);
 				//Each localIndice
 				for(id in tour_blocks.localIndices()) 
 				{
-					var search:NRDFS = new NRDFS(size,dist);
 					var mArray:ArrayList[Int] = new ArrayList[Int]();
 					mArray.add(0 as Int);
 					mArray.add((tour_blocks(id)) as Int);
 					
 					var tour:Tour = new Tour(mArray,size);
+					tour.SetCurrCost(dist(0, (tour_blocks(id)) as Int));
 					
 					search.addTour(tour);
 					search.Solve();
@@ -89,7 +90,7 @@ public class Hello {
 					val myTourFinalRes = search.GetBestTourListOfNodes();
 					val myFinalResult = search.GetBestCost();
 					
-					Console.OUT.println(here.id + " " + myFinalResult);
+					//Console.OUT.println(here.id + " " + myFinalResult);
 					
 					//Calls an atomic block at GlobalRef's home place to check if
 					// we found a new best Tour
@@ -123,7 +124,7 @@ public class Hello {
     	var start_time : Long = System.currentTimeMillis();
     	Console.OUT.println("Start salesman problem");
     	
-    	//Solve TSP problem and receive the best tour
+    	//Solve TSP problem and receive the best tour	
      	var result : Array_1[Int] = new Array_1[Int](tsp.solve());
       	
      	var finish_time : Long = System.currentTimeMillis();
@@ -143,7 +144,8 @@ public class Hello {
         { 
         	Console.OUT.print(result(i) + ", ");
         }
-        Console.OUT.print("]\n");
+        Console.OUT.print("0
+        		]\n");
         Console.OUT.println("Best Cost: " + best_tour_cost); 
     }
     

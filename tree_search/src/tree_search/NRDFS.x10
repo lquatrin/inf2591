@@ -58,15 +58,7 @@ public class NRDFS {
 	
 	public def GetBestCost () : Long
 	{
-		var List:ArrayList[Int] = BestTour.GetList();
-		var id : Int = 0 as Int;
-		id = List((List.size() - 1)) as Int;
-		
-		//Console.OUT.println(here.id + " " + BestTour.GetList() + " " + Bestcost + " " +  (Bestcost + distMatrix(id, 0)));
-		
-		var final_cost : Long = (Bestcost as Long) + (distMatrix(id, 0) as Long);
-		
-		return final_cost;
+		return (Bestcost as Long);
 	}
 	
 	public def GetBestTourListOfNodes () : ArrayList[Int]
@@ -81,16 +73,14 @@ public class NRDFS {
 	}
 		
 	private def BestTour(t_tour:Tour): Boolean{	
-		var value:Int = 0 as Int;
+		var value:Int = t_tour.GetCurrCost() as Int;
+		
 		var List:ArrayList[Int] = t_tour.GetList();
-
-		for(i in 0 .. (List.size()-2)) {
-			var x:Int = List.get(i);
-			var y:Int = List.get(i+1);
-			value+=distMatrix(x,y);
-		}
+		var id : Int = List((List.size() - 1)) as Int;
+		value += (distMatrix(id, 0) as Long);
+		
 		if (value < Bestcost){
-			Bestcost = value;
+			Bestcost = value as Int;
 			return true;
 		}
 		else{
@@ -121,7 +111,7 @@ public class NRDFS {
 			
 	}
 	
-	private def AddCity(t_tour:Tour,i:Int){
+	private def AddCity(t_tour:Tour, i:Int){
 		t_tour.AddNode(i);
 		t_tour.SetNodeVisited(i);
 	}
@@ -137,22 +127,33 @@ public class NRDFS {
 	public def Solve(){
 		while(!pilha.isEmpty()){
 			var curr_tour:Tour = pilha.pop();
-			//Console.OUT.println("size " + CityCount(curr_tour));
-			if (CityCount(curr_tour) == (size) as Int){
-				//Console.OUT.println("try to catch best");
-				if(BestTour(curr_tour)){
-				  UpdateBestTour(curr_tour);
+			
+			if (curr_tour.GetCurrCost() < Bestcost)
+			{
+				if (CityCount(curr_tour) == (size) as Int){
+					if(BestTour(curr_tour)){
+					  UpdateBestTour(curr_tour);
+					}
 				}
-			}
-			else{
-				for (var i:Int = (size-1) as Int; i > 0 as Int; i= i - 1 as Int){
+				else{
+					for (var i:Int = (size-1) as Int; i > 0 as Int; i= i - 1 as Int){
 					   if (Feasible(curr_tour, i as Int)) {
 						  AddCity(curr_tour, i as Int);
+							  			
+						  var s_2 : Int = curr_tour.GetCityNode((curr_tour.GetSize() - 2) as Int);
+							  
 						  var m_array:ArrayList[Int] = curr_tour.GetList().clone();
 						  var newtour:Tour = new Tour(m_array,size);
+						  newtour.SetCurrCost(
+								  curr_tour.GetCurrCost() + 
+								  distMatrix(s_2, i)
+						  );
+						  
 						  pilha.push(newtour);
+							  
 						  Removelastcity(curr_tour);
 					   }
+					}
 				}
 			}
 		}
