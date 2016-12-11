@@ -28,7 +28,7 @@ public class Solver {
 	public def SetGlobalRef (gref : GlobalRef[Solver])
 	{
 		my_global_ref = gref;
-		Console.OUT.println("GlobalRef Home: " + my_global_ref.home);
+		//Console.OUT.println("GlobalRef Home: " + my_global_ref.home);
 	}
 	
 	public def this (sz : Int, distances : Array_2[Int])

@@ -55,7 +55,7 @@ public class NRDFS {
 
 	private val distMatrix:Array_2[Int];
 	
-	private var Bestcost:Int;
+	private var Bestcost:Long;
 	private var BestTour:Tour;
 	
 	private var global_solver_ref : GlobalRef[Solver];
@@ -85,7 +85,8 @@ public class NRDFS {
 		var id : Int = List((List.size() - 1)) as Int;
 		value += (distMatrix(id, 0) as Long);
 		
-		if (value < Bestcost){
+		if (this.CheckBestTourPartialCost(value))
+		{
 			Bestcost = value as Int;
 			return true;
 		}
@@ -130,10 +131,20 @@ public class NRDFS {
 		pilha.push(t_tour);
 	}
 	
-	public def CheckBestTourPartialCost (t_tour:Tour) : Boolean{
-		if (t_tour.GetCurrCost() < Bestcost)
+	public def CheckBestTourPartialCost (tour_cost : Long) : Boolean{
+		if (tour_cost < Bestcost)
 		{
-			return true;//t_tour.GetCurrCost() < Bestcost;
+			val bglobalcost : Long;
+			
+			atomic{
+				bglobalcost = Solver.best_result()();
+			}
+			
+			if (bglobalcost < Bestcost)
+			{
+				Bestcost = bglobalcost;
+			}
+			return tour_cost < Bestcost;
 		}
 		return false;
 	}
@@ -143,7 +154,7 @@ public class NRDFS {
 		while(!pilha.isEmpty()){
 			var curr_tour:Tour = pilha.pop();
 			
-			if (this.CheckBestTourPartialCost(curr_tour))
+			if (this.CheckBestTourPartialCost(curr_tour.GetCurrCost()))
 			{
 				if (CityCount(curr_tour) == (size) as Int){
 					if(BestTour(curr_tour)){
