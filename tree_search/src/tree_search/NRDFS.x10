@@ -130,11 +130,20 @@ public class NRDFS {
 		pilha.push(t_tour);
 	}
 	
+	public def CheckBestTourPartialCost (t_tour:Tour) : Boolean{
+		if (t_tour.GetCurrCost() < Bestcost)
+		{
+			return true;//t_tour.GetCurrCost() < Bestcost;
+		}
+		return false;
+	}
+	
 	public def Solve(){
+		
 		while(!pilha.isEmpty()){
 			var curr_tour:Tour = pilha.pop();
 			
-			if (curr_tour.GetCurrCost() < Bestcost)
+			if (this.CheckBestTourPartialCost(curr_tour))
 			{
 				if (CityCount(curr_tour) == (size) as Int){
 					if(BestTour(curr_tour)){

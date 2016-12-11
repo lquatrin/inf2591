@@ -20,6 +20,11 @@ public class Solver {
 	
 	private var my_global_ref : GlobalRef[Solver];
 	
+	public val result = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
+	
+	static val places = Place.places();
+	public static val best_result = PlaceLocalHandle.make[Cell[Long]](places, ()=>new Cell[Long](-1));
+	
 	public def SetGlobalRef (gref : GlobalRef[Solver])
 	{
 		my_global_ref = gref;
@@ -78,7 +83,7 @@ public class Solver {
 	def SolveSalesmanProblem() : Array_1[Int]{
 		//Create GlobalRefs to all places
 		val besttour = new GlobalRef[Array_1[Int]](new Array_1[Int](size));
-		val result = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
+		//val result = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
 		
 		//Create an Array 1D with some data to distribute 
 		//           equally between the available places
@@ -88,6 +93,24 @@ public class Solver {
 		//Place 0: [6..8] <- localIndices
 		val tour_blocks = new DistArray_Block_1[Long](size - 1, (i:Long)=>(i + 1) as Long);
 
+		//GAMBIA PAAA CARAAALHO
+		for(p in places) at(p) {
+			best_result()(Long.MAX_VALUE);
+		}
+		/*
+		val sup : Long = 5;
+		Console.OUT.println("static");
+		for(p in places) at(p) {
+			best_result().set(sup as Long);
+			Console.OUT.println(here.id + " " + best_result()());
+		}
+
+		val c = Solver.best_result;
+		Console.OUT.println("local");
+		for(p in places) at(p) {
+			Console.OUT.println(here.id + " " + c()());
+		}*/
+		
 		finish for (p in Place.places()) {
 			at (p) async {
 				var search:NRDFS = new NRDFS(size, dist, my_global_ref);
@@ -112,28 +135,49 @@ public class Solver {
 					{
 						myTourFinalRes = search.GetBestTourListOfNodes();
 						myFinalResult = search.GetBestCost();
-					}
-					Console.OUT.println(here.id + " " + myFinalResult);	
-				}	
-				
-				//Calls an atomic block at GlobalRef's home place to check if
-				// we found a new best Tour
-				val amfr : Long = myFinalResult;
-				val amtfr : ArrayList[Int] = myTourFinalRes;
-				at(result.home){
-					val v : Long = amfr;
-					val ar : ArrayList[Int] = amtfr;
-					atomic{
-						if (v < result()()) {
-							//Best Tour Cost
-							result().set(v);
-							//Best Tour
-							for(i in 0 .. (size-1)){
-								besttour()(i) = ar(i);					
+						
+						Console.OUT.println(here.id + " " + myFinalResult);	
+						
+						//Calls an atomic block at GlobalRef's home place to check if
+						// we found a new best Tour
+						val amfr : Long = myFinalResult;
+						val amtfr : ArrayList[Int] = myTourFinalRes;
+						at(result.home){
+							val v : Long = amfr;
+							val ar : ArrayList[Int] = amtfr;
+							val f_x10_ibm_f : Long;
+							val need_to_update : Boolean;
+							atomic{
+								if (v < result()()) {
+									//Best Tour Cost
+									result().set(v);
+									f_x10_ibm_f = v;
+									//Best Tour
+									for(i in 0 .. (size-1)){
+										besttour()(i) = ar(i);					
+									}
+									need_to_update = true;
+								}
+								else
+								{
+									f_x10_ibm_f = Long.MAX_VALUE;
+									need_to_update = false;
+								}
+							}	
+							if (need_to_update)
+							{
+								for(pt in places)
+								{	
+									at(pt) //async
+									{
+										atomic{ best_result().set(f_x10_ibm_f); }
+									}		
+								}
 							}
 						}
-					}	
-				}
+					}
+					
+				}	
 			}				
 		}
 		

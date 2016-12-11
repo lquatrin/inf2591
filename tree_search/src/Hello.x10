@@ -15,7 +15,7 @@ import x10.io.FileReader;
 import x10.io.Reader;
 import x10.util.StringBuilder;
 import x10.util.*;
-
+ 
 import x10.lang.Reducible;
 
 import tree_search.Solver;
