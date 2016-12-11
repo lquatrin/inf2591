@@ -1,5 +1,6 @@
 import tree_search.RDFS;
 import tree_search.NRDFS;
+import tree_search.NRDFSS;
 import tree_search.Tour;
 
 import x10.array.*;
@@ -125,7 +126,7 @@ public class Hello {
 	}
 	
     public static def main(args:Rail[String]) {
-    	val f = new File("./lau15_dist.txt");
+    	val f = new File("./uk12_dist.txt");
     	val fr = new FileReader(f);
     	var tsp:Hello = new Hello(fr);
     	

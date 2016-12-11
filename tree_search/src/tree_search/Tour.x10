@@ -11,7 +11,7 @@ public class Tour {
 	
 	public def Copy (tr : Tour)
 	{
-		this.listofnodes = new ArrayList[Int](tr.GetSize() as Int);
+		this.listofnodes = new ArrayList[Int]();
 		for (i in 0..(tr.GetSize() - 1) as Int)
 		{
 			this.listofnodes.add(tr.GetCityNode(i as Int));
