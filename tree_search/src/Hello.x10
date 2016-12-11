@@ -18,27 +18,27 @@ import x10.util.*;
 
 import x10.lang.Reducible;
 
+import tree_search.Solver;
+
 public class Hello {
-	private val size:Int;
-	private val dist:Array_2[Int];
-	
-	public def GetSize () : Int 
+	private var msolver : Solver;
+		
+	def this(r:Reader) throws Exception
 	{
-		return size;
-	}
-	
-	public def GetDist (i:Int, j:Int) : Long
-	{
-		return dist(i,j) as Long;
-	}
-	
-	def this(r:Reader) throws Exception{
-		size = nextInt(r);
-		dist =  new Array_2[Int](size,size);
+		var size : Int = nextInt(r);
+		
+		var dist : Array_2[Int] = new Array_2[Int](size,size);
 		for (i in 0..(size-1)){ 
 			for ( j in 0..(size-1)) 
 				dist(i,j) = nextInt(r);
 		}
+		
+		msolver = new Solver(size, dist);
+	}
+	
+	public def CallSolver ()
+	{
+		msolver.Run();
 	}
 	
 	private static def nextInt(r:Reader){
@@ -58,108 +58,17 @@ public class Hello {
 		return Int.parse(sb.toString());
 	}
 	
-	def solve() : Array_1[Int]{
-		//Create GlobalRefs to all places
-		val besttour = new GlobalRef[Array_1[Int]](new Array_1[Int](size));
-		val result = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
-		
-		//Create an Array 1D with some data to distribute 
-		//           equally between the available places
-		//e.g. -> DistArray(9) to 3 places:
-		//Place 0: [0..2] <- localIndices
-		//Place 1: [3..5] <- localIndices
-		//Place 0: [6..8] <- localIndices
-		val tour_blocks = new DistArray_Block_1[Long](size - 1, (i:Long)=>(i + 1) as Long);
-
-		finish for (p in Place.places()) {
-			at (p) async {
-				var search:NRDFS = new NRDFS(size,dist);
-				var myFinalResult : Long = Long.MAX_VALUE;
-				var myTourFinalRes : ArrayList[Int] = new ArrayList[Int](size);
-				
-				//Each localIndice
-				for(id in tour_blocks.localIndices()) 
-				{
-					var mArray:ArrayList[Int] = new ArrayList[Int]();
-					mArray.add(0 as Int);
-					mArray.add((tour_blocks(id)) as Int);
-					
-					var tour:Tour = new Tour(mArray,size);
-					tour.SetCurrCost(dist(0, (tour_blocks(id)) as Int));
-					
-					search.addTour(tour);
-					search.Solve();
-					
-					//Get the best Tour after NRDFS
-					if (search.GetBestCost() < myFinalResult)
-					{
-						myTourFinalRes = search.GetBestTourListOfNodes();
-						myFinalResult = search.GetBestCost();
-					}
-					Console.OUT.println(here.id + " " + myFinalResult);	
-				}	
-				
-				//Calls an atomic block at GlobalRef's home place to check if
-				// we found a new best Tour
-				val amfr : Long = myFinalResult;
-				val amtfr : ArrayList[Int] = myTourFinalRes;
-				at(result.home){
-					val v : Long = amfr;
-					val ar : ArrayList[Int] = amtfr;
-					atomic{
-						if (v < result()()) {
-							//Best Tour Cost
-							result().set(v);
-							//Best Tour
-							for(i in 0 .. (size-1)){
-								besttour()(i) = ar(i);					
-							}
-						}
-					}	
-				}
-			}				
-		}
-		
-		//Return the best tour
-		var ret_tour : Array_1[Int] = new Array_1[Int](besttour());
-		return ret_tour;
-	}
-	
     public static def main(args:Rail[String]) {
     	val f = new File("./uk12_dist.txt");
     	val fr = new FileReader(f);
     	var tsp:Hello = new Hello(fr);
     	
-    	var start_time : Long = System.currentTimeMillis();
-    	Console.OUT.println("Start salesman problem");
-    	
-    	//Solve TSP problem and receive the best tour	
-     	var result : Array_1[Int] = new Array_1[Int](tsp.solve());
-      	
-     	var finish_time : Long = System.currentTimeMillis();
-        Console.OUT.println("Finished in " + (finish_time - start_time) + " miliseconds");
-        
-        //Compute the best tour with the best cost
-        var best_tour_cost : Long = 0 as Long;
-        for (i in 0..(tsp.GetSize() - 2))
-        { 
-        	best_tour_cost += tsp.GetDist(result(i), result(i+1)) as Long;
-        }
-        best_tour_cost += tsp.GetDist(result((tsp.GetSize() - 1) as Int) as Int, 0 as Int) as Long;
-        
-        //Print Best Tour and Best Cost
-        Console.OUT.print("Best Tour: ["); 
-        for (i in 0..(tsp.GetSize() - 1))
-        { 
-        	Console.OUT.print(result(i) + ", ");
-        }
-        Console.OUT.print("0]\n");
-        Console.OUT.println("Best Cost: " + best_tour_cost); 
+    	tsp.CallSolver();
     }
     
     //Solution with GlobalRef And Atomic
     // -> numPlaces() must to be equal size - 1
-    def solveWithGlobalRefAndAtomic ()
+    /*def solveWithGlobalRefAndAtomic ()
     {
     	val besttour = new GlobalRef[Array_1[Int]](new Array_1[Int](size));
     	val result = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
@@ -195,11 +104,11 @@ public class Hello {
     	//Imprimir a menor rota
     	Console.OUT.println("Best Cost: " + result()());
     	Console.OUT.println("Best Tour: " + besttour());
-    }
+    }*/
     
     //Solution with MinReducer
     // -> numPlaces() must to be equal size - 1
-    def solveWithReducer()
+    /*def solveWithReducer()
     {
     	val result = finish(Reducible.MinReducer[Long](Long.MAX_VALUE)) {
     	for (p in Place.places()) {
@@ -226,5 +135,5 @@ public class Hello {
    			}	
    		}
    		};
-    }
+    }*/
 }
