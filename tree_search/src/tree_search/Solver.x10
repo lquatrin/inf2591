@@ -13,7 +13,6 @@ import x10.io.Reader;
 import x10.util.StringBuilder;
 import x10.util.*;
 
-
 public class Solver {
 	private val size:Int;
 	

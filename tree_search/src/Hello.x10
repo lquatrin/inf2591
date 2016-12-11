@@ -21,7 +21,7 @@ import x10.lang.Reducible;
 import tree_search.Solver;
 
 public class Hello {
-	private var msolver : Solver;
+	private var msolver : GlobalRef[Solver];
 		
 	def this(r:Reader) throws Exception
 	{
@@ -33,12 +33,12 @@ public class Hello {
 				dist(i,j) = nextInt(r);
 		}
 		
-		msolver = new Solver(size, dist);
+		msolver = new GlobalRef[Solver](new Solver(size, dist));
 	}
 	
 	public def CallSolver ()
 	{
-		msolver.Run();
+		msolver().Run();
 	}
 	
 	private static def nextInt(r:Reader){
