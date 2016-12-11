@@ -41,6 +41,11 @@ public class Hello {
 		msolver().Run();
 	}
 	
+	public def SetGlobalRef ()
+	{
+		msolver().SetGlobalRef(msolver);
+	}
+	
 	private static def nextInt(r:Reader){
 		val sb = new StringBuilder();
 		var skip_white:Boolean = true;
@@ -62,6 +67,7 @@ public class Hello {
     	val f = new File("./uk12_dist.txt");
     	val fr = new FileReader(f);
     	var tsp:Hello = new Hello(fr);
+    	tsp.SetGlobalRef();
     	
     	tsp.CallSolver();
     }

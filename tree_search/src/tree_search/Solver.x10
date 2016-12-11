@@ -18,6 +18,14 @@ public class Solver {
 	
 	private val dist:Array_2[Int];
 	
+	private var my_global_ref : GlobalRef[Solver];
+	
+	public def SetGlobalRef (gref : GlobalRef[Solver])
+	{
+		my_global_ref = gref;
+		Console.OUT.println("GlobalRef Home: " + my_global_ref.home);
+	}
+	
 	public def this (sz : Int, distances : Array_2[Int])
 	{
 		size = sz;
@@ -82,7 +90,7 @@ public class Solver {
 
 		finish for (p in Place.places()) {
 			at (p) async {
-				var search:NRDFS = new NRDFS(size, dist);
+				var search:NRDFS = new NRDFS(size, dist, my_global_ref);
 				var myFinalResult : Long = Long.MAX_VALUE;
 				var myTourFinalRes : ArrayList[Int] = new ArrayList[Int](size);
 				

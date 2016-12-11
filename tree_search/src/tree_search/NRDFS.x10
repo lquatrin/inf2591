@@ -3,7 +3,7 @@ import x10.util.Stack;
 import x10.array.*;
 import x10.lang.Int;
 import tree_search.RDFS;
-import Hello;
+import tree_search.Solver;
 import x10.util.*;
 /*
  * for (city = n!1; city >= 1; city!!)
@@ -54,8 +54,11 @@ public class NRDFS {
 	public var pilha:Stack[Tour] = new Stack[Tour]();
 
 	private val distMatrix:Array_2[Int];
+	
 	private var Bestcost:Int;
 	private var BestTour:Tour;
+	
+	private var global_solver_ref : GlobalRef[Solver];
 	
 	public def GetBestCost () : Long
 	{
@@ -67,10 +70,12 @@ public class NRDFS {
 		return BestTour.GetListOfNodes();
 	}
 	
-	public def this(size:Int,matrix:Array_2[Int]) {
+	public def this(size : Int, matrix : Array_2[Int], gsr : GlobalRef[Solver]) {
 	  this.size = size;
 	  distMatrix = matrix;
 	  Bestcost = Int.MAX_VALUE;
+	  
+	  global_solver_ref = gsr;
 	}
 		
 	private def BestTour(t_tour:Tour): Boolean{	
