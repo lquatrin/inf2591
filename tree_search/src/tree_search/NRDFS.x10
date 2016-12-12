@@ -101,7 +101,7 @@ public class NRDFS {
 		terminate = a;
 	}
 	
-	public def RemainingCities():Long{
+	public def RemainingTours():Long{
 		return pilha.size();
 	}
 	
@@ -170,8 +170,7 @@ public class NRDFS {
 	public def Solve(){
 		
 		while(!pilha.isEmpty()){
-			
-			//at(global_solver_ref.home) global_solver_ref().updateStack(m_id);
+				
 			/*
 			if(terminate && pilha.isEmpty())
 				break;

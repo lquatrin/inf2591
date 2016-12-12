@@ -24,6 +24,12 @@ public class Solver {
 	
 	static val places = Place.places();
 	public static val best_result = PlaceLocalHandle.make[Cell[Long]](places, ()=>new Cell[Long](-1));
+	
+	public static val places_waiting = PlaceLocalHandle.make[Cell[Long]](places, ()=>new Cell[Long](0));
+	public static val loop_status = PlaceLocalHandle.make[Cell[Boolean]](places, ()=>new Cell[Boolean](true));
+	
+	
+	
 	//public static val tour_stealed = PlaceLocalHandle.make[Cell[Tour]](places, ()=>new Cell[Tour]());
 	private val ListofWorkers:ArrayList[NRDFS];
 	
@@ -133,6 +139,10 @@ public class Solver {
 		for(p in places) at(p) {
 			best_result()(Long.MAX_VALUE);
 		}
+		for(p in places) at(p) {
+			places_waiting()(0);
+			loop_status()(true);
+		}		
 		for(p in places){
 		  var tsearch:NRDFS = new NRDFS(size, dist,p.id as Int, my_global_ref);
 		  ListofWorkers.add(tsearch);
@@ -156,11 +166,18 @@ public class Solver {
 					
 					search.addTour(tour);
 				}
-				
-				while(search.RemainingCities() > 0)
+
+				var local_loop_status : Boolean = true;
+				while(local_loop_status)
 				{
 					search.Solve();
 						
+					/*val waiting_places : Long;
+					atomic { waiting_places = Solver.places_waiting()(); }
+					if (search.RemainingTours() >= 2 && waiting_places > 0)
+					{
+					}*/
+					
 					//Get the best Tour after NRDFS
 					if (search.GetBestCost() < myFinalResult)
 					{
@@ -207,7 +224,42 @@ public class Solver {
 							}
 						}	
 					}
-				}	
+					
+					if (search.RemainingTours() == 0)
+					{
+						local_loop_status = false;
+						atomic{ loop_status()() = false; }
+						
+						for(pt in places)
+						{	
+							at(pt) //async
+							{
+								atomic{ places_waiting()() += 1; }
+							}		
+						}
+						
+						val finisht : Boolean;
+						atomic {
+							finisht = places_waiting()() == Place.numPlaces();
+						}
+						
+						
+						if(finisht)
+						{
+							for(pt in places)
+							{	
+								at(pt) //async
+								{
+									atomic{ loop_status()() = true; }
+								}		
+							}
+						}
+												
+						while(!loop_status()());	
+
+                        local_loop_status = search.RemainingTours() > 0;
+					}
+				}
 			}				
 		}
 		
