@@ -130,7 +130,6 @@ public class Solver {
 		//Place 0: [6..8] <- localIndices
 		val tour_blocks = new DistArray_Block_1[Long](size - 1, (i:Long)=>(i + 1) as Long);
 
-		//GAMBIA PAAA CARAAALHO
 		for(p in places) at(p) {
 			best_result()(Long.MAX_VALUE);
 		}
@@ -138,19 +137,6 @@ public class Solver {
 		  var tsearch:NRDFS = new NRDFS(size, dist,p.id as Int, my_global_ref);
 		  ListofWorkers.add(tsearch);
 		}
-		/*
-		val sup : Long = 5;
-		Console.OUT.println("static");
-		for(p in places) at(p) {
-			best_result().set(sup as Long);
-			Console.OUT.println(here.id + " " + best_result()());
-		}
-
-		val c = Solver.best_result;
-		Console.OUT.println("local");
-		for(p in places) at(p) {
-			Console.OUT.println(here.id + " " + c()());
-		}*/
 		
 		finish for (p in Place.places()) {
 			at (p) async {
@@ -169,16 +155,20 @@ public class Solver {
 					tour.SetCurrCost(dist(0, (tour_blocks(id)) as Int));
 					
 					search.addTour(tour);
+				}
+				
+				while(search.RemainingCities() > 0)
+				{
 					search.Solve();
-					
+						
 					//Get the best Tour after NRDFS
 					if (search.GetBestCost() < myFinalResult)
 					{
 						myTourFinalRes = search.GetBestTourListOfNodes();
 						myFinalResult = search.GetBestCost();
-						
-						Console.OUT.println(here.id + " " + myFinalResult);	
-						
+							
+						//Console.OUT.println(here.id + " " + myFinalResult);	
+							
 						//Calls an atomic block at GlobalRef's home place to check if
 						// we found a new best Tour
 						val amfr : Long = myFinalResult;
@@ -215,9 +205,8 @@ public class Solver {
 									}		
 								}
 							}
-						}
+						}	
 					}
-					
 				}	
 			}				
 		}

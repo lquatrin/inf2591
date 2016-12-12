@@ -101,6 +101,10 @@ public class NRDFS {
 		terminate = a;
 	}
 	
+	public def RemainingCities():Long{
+		return pilha.size();
+	}
+	
 	public def haveWork():Int{
 		if (pilha.isEmpty() || pilha.size()<2){
 			return -1 as Int;
@@ -183,6 +187,7 @@ public class NRDFS {
 				if (CityCount(curr_tour) == (size) as Int){
 					if(BestTour(curr_tour)){
 					  UpdateBestTour(curr_tour);
+					  return;
 					}
 				}
 				else{
@@ -207,9 +212,6 @@ public class NRDFS {
 				}
 			}
 		}
-		
-		//Console.OUT.println("print best tour");
-		//BestTour.PrintTour();
 	}
 	
 	public static def main(Rail[String]) {
