@@ -24,6 +24,9 @@ public class Solver {
 	
 	static val places = Place.places();
 	public static val best_result = PlaceLocalHandle.make[Cell[Long]](places, ()=>new Cell[Long](-1));
+	//public static val tour_stealed = PlaceLocalHandle.make[Cell[Tour]](places, ()=>new Cell[Tour]());
+	private val ListofWorkers:ArrayList[NRDFS];
+	
 	
 	public def SetGlobalRef (gref : GlobalRef[Solver])
 	{
@@ -39,6 +42,7 @@ public class Solver {
 			for ( j in 0..(size-1)) 
 				dist(i,j) = distances(i,j);
 		}
+		ListofWorkers = new ArrayList[NRDFS]();
 	}
 	
 	public def GetSize () : Int 
@@ -80,6 +84,39 @@ public class Solver {
 		Console.OUT.println("Best Cost: " + best_tour_cost); 
 	}
 	
+	
+	public def updateStack(index:Int){
+		at (result.home){
+		  var itens : Int = -1 as Int ;
+		   for(pt in places)
+			{	
+			   atomic{
+			   	itens = ListofWorkers(pt.id).haveWork();
+			   }
+			   if (itens != -1 as Int){ 
+				  ListofWorkers(index).finished(false);
+				  return;
+			  }
+			}
+		   ListofWorkers(index).finished(true);
+		}
+	}
+
+	public def getTour(index:Int){
+		at (result.home){
+			/*var itens : Int = -1 as Int ;
+			for(pt in places)
+			{	
+				itens = ListofWorkers(pt.id).haveWork();
+			}
+			if (itens!=-1 as Int){
+				atomic{
+				  ListofWorkers(itens).
+				}
+			}*/
+		}
+	}
+	
 	def SolveSalesmanProblem() : Array_1[Int]{
 		//Create GlobalRefs to all places
 		val besttour = new GlobalRef[Array_1[Int]](new Array_1[Int](size));
@@ -97,6 +134,10 @@ public class Solver {
 		for(p in places) at(p) {
 			best_result()(Long.MAX_VALUE);
 		}
+		for(p in places){
+		  var tsearch:NRDFS = new NRDFS(size, dist,p.id as Int, my_global_ref);
+		  ListofWorkers.add(tsearch);
+		}
 		/*
 		val sup : Long = 5;
 		Console.OUT.println("static");
@@ -113,7 +154,7 @@ public class Solver {
 		
 		finish for (p in Place.places()) {
 			at (p) async {
-				var search:NRDFS = new NRDFS(size, dist, my_global_ref);
+				var search:NRDFS = ListofWorkers(p.id); //new NRDFS(size, dist,p.id as Int, my_global_ref);
 				var myFinalResult : Long = Long.MAX_VALUE;
 				var myTourFinalRes : ArrayList[Int] = new ArrayList[Int](size);
 				

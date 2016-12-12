@@ -57,8 +57,9 @@ public class NRDFS {
 	
 	private var Bestcost:Long;
 	private var BestTour:Tour;
-	
 	private var global_solver_ref : GlobalRef[Solver];
+	private var terminate:Boolean;
+	private var m_id:Int;
 	
 	public def GetBestCost () : Long
 	{
@@ -70,12 +71,13 @@ public class NRDFS {
 		return BestTour.GetListOfNodes();
 	}
 	
-	public def this(size : Int, matrix : Array_2[Int], gsr : GlobalRef[Solver]) {
+	public def this(size : Int, matrix : Array_2[Int],id:Int, gsr : GlobalRef[Solver]) {
 	  this.size = size;
 	  distMatrix = matrix;
 	  Bestcost = Int.MAX_VALUE;
-	  
+	  terminate = false;
 	  global_solver_ref = gsr;
+	  m_id = id;
 	}
 		
 	private def BestTour(t_tour:Tour): Boolean{	
@@ -95,6 +97,17 @@ public class NRDFS {
 		}
 	}
 	
+	public def finished(a:Boolean){
+		terminate = a;
+	}
+	
+	public def haveWork():Int{
+		if (pilha.isEmpty() || pilha.size()<2){
+			return -1 as Int;
+		}
+		return m_id;
+	}
+	
 	private def CityCount(t_tour:Tour):Int{        
 		return t_tour.GetSize() as Int;
 	}
@@ -102,6 +115,7 @@ public class NRDFS {
 	private def Removelastcity(t_tour:Tour){
 		t_tour.RemoveNode();
 	}
+	
 	
 	private def Feasible(t_tour:Tour,i:Int):Boolean{
 		var resp:Boolean = false;
@@ -152,6 +166,16 @@ public class NRDFS {
 	public def Solve(){
 		
 		while(!pilha.isEmpty()){
+			
+			//at(global_solver_ref.home) global_solver_ref().updateStack(m_id);
+			/*
+			if(terminate && pilha.isEmpty())
+				break;
+			else{
+				if (pilha.isEmpty()){
+					
+				}
+			}*/
 			var curr_tour:Tour = pilha.pop();
 			
 			if (this.CheckBestTourPartialCost(curr_tour.GetCurrCost()))
