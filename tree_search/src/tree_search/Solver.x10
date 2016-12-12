@@ -24,6 +24,10 @@ public class Solver {
 	
 	static val places = Place.places();
 	public static val best_result = PlaceLocalHandle.make[Cell[Long]](places, ()=>new Cell[Long](-1));
+	
+	public static val places_waiting = PlaceLocalHandle.make[Cell[Long]](places, ()=>new Cell[Long](0));
+	public static val loop_status = PlaceLocalHandle.make[Cell[Boolean]](places, ()=>new Cell[Boolean](true));
+	
 	//public static val tour_stealed = PlaceLocalHandle.make[Cell[Tour]](places, ()=>new Cell[Tour]());
 	private val ListofWorkers:ArrayList[NRDFS];
 	
@@ -130,28 +134,18 @@ public class Solver {
 		//Place 0: [6..8] <- localIndices
 		val tour_blocks = new DistArray_Block_1[Long](size - 1, (i:Long)=>(i + 1) as Long);
 
-		//GAMBIA PAAA CARAAALHO
 		for(p in places) at(p) {
 			best_result()(Long.MAX_VALUE);
 		}
+		for(p in places) at(p) {
+			places_waiting()(0);
+			loop_status()(true);
+		}	
 		for(p in places){
 		  var tsearch:NRDFS = new NRDFS(size, dist,p.id as Int, my_global_ref);
 		  ListofWorkers.add(tsearch);
 		}
-		/*
-		val sup : Long = 5;
-		Console.OUT.println("static");
-		for(p in places) at(p) {
-			best_result().set(sup as Long);
-			Console.OUT.println(here.id + " " + best_result()());
-		}
 
-		val c = Solver.best_result;
-		Console.OUT.println("local");
-		for(p in places) at(p) {
-			Console.OUT.println(here.id + " " + c()());
-		}*/
-		
 		finish for (p in Place.places()) {
 			at (p) async {
 				var search:NRDFS = ListofWorkers(p.id); //new NRDFS(size, dist,p.id as Int, my_global_ref);
@@ -169,15 +163,28 @@ public class Solver {
 					tour.SetCurrCost(dist(0, (tour_blocks(id)) as Int));
 					
 					search.addTour(tour);
+				}
+								
+				var local_loop_status : Boolean = true;
+				while(local_loop_status)
+				{
 					search.Solve();
 					
+					/*
+					val waiting_places : Long;
+					atomic { waiting_places = Solver.places_waiting()(); }
+					if (search.RemainingTours() >= 2 && waiting_places > 0)
+					{
+					}
+					*/
+
 					//Get the best Tour after NRDFS
 					if (search.GetBestCost() < myFinalResult)
 					{
 						myTourFinalRes = search.GetBestTourListOfNodes();
 						myFinalResult = search.GetBestCost();
 						
-						Console.OUT.println(here.id + " " + myFinalResult);	
+						//Console.OUT.println(here.id + " " + myFinalResult);	
 						
 						//Calls an atomic block at GlobalRef's home place to check if
 						// we found a new best Tour
@@ -215,7 +222,40 @@ public class Solver {
 									}		
 								}
 							}
+						}	
+					}
+					
+					if (search.RemainingTours() == 0)
+					{
+						local_loop_status = false;
+						atomic{ loop_status()() = false; }
+					
+						for(pt in places)
+						{	
+							at(pt) //async
+							{
+								atomic{ places_waiting()() += 1; }
+							}		
 						}
+									
+						val finisht : Boolean;
+						atomic {
+							finisht = places_waiting()() == Place.numPlaces();
+						}
+						
+						if(finisht)
+						{
+							for(pt in places)
+							{	
+								at(pt) //async
+								{
+									atomic{ loop_status()() = true; }
+								}		
+							}
+						}
+															
+						while(!loop_status()());	
+						local_loop_status = search.RemainingTours() > 0;
 					}
 					
 				}	
