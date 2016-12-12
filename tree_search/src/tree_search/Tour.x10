@@ -37,12 +37,13 @@ public class Tour {
 		this.listofnodes = nodes;
 		this.size = valor;
 		this.listofvisited = new ArrayList[Int](size as Long);
+	
 		for (i in 0..(size-1)){ 
 			this.listofvisited(i) = -1 as Int;
 		}
-		this.listofvisited(0 as Int) = 1 as Int;
-		this.listofvisited(listofnodes(1) as Int)= 1 as Int;
-		
+		for (i in 0..(listofnodes.size()-1)){ 
+			this.listofvisited(this.listofnodes(i)) = 1 as Int;
+		}
 		this.curr_cost = 0 as Long;
 	}
 
@@ -81,6 +82,10 @@ public class Tour {
 		return listofnodes;
 	}
 	
+	public def SetNodeUnvisited(i:Int){
+		listofvisited(i)= -1 as Int;
+	}
+
 	public def SetNodeVisited(i:Int){
 		listofvisited(i)= 1 as Int;
 	}
