@@ -112,7 +112,7 @@ public class CSolver {
 					
 					stack_tours().push(tour);
 				}
-				
+		
 				while(working()() && not_terminate()())
 				{		
 					var local_best_cost : Long = best_cost()();
@@ -196,37 +196,50 @@ public class CSolver {
 								if (value < local_best_cost)
 								{
 									val up_g_local_best_cost : Long;
+									var need_global_update : Boolean = false;
 									atomic{
-										best_cost().set(value);
-										up_g_local_best_cost = best_cost()();
+										if (value < best_cost()())
+										{
+											best_cost().set(value);
+											up_g_local_best_cost = best_cost()();
+											need_global_update = true;
+										}
+										else
+										{
+											up_g_local_best_cost = -1;
+										}
 									}
 									
-									at(best_global_cost.home)
+									if (need_global_update)
 									{
-										var update_if_necessary : Boolean = false;
-										atomic {
-											if (up_g_local_best_cost < best_global_cost()())
-											{
-												best_global_cost()() = up_g_local_best_cost;
-												for(t in 0..(List.size()-1) as Int)
-												{
-													best_global_tour()(t) = List(t);
-												}
-												update_if_necessary = true;
-											}
-										}
-										if (update_if_necessary)
+										at(best_global_cost.home)
 										{
-											for(psg in Place.places())
-											{
-												at(psg) 
+											var update_if_necessary : Boolean = false;
+											atomic {
+												if (up_g_local_best_cost < best_global_cost()())
 												{
-													atomic { best_cost()() = up_g_local_best_cost; }
-												}	
+													best_global_cost()() = up_g_local_best_cost;
+													for(t in 0..(List.size()-1) as Int)
+													{
+														best_global_tour()(t) = List(t);
+													}
+													update_if_necessary = true;
+												}
+											}
+											if (update_if_necessary)
+											{
+												for(psg in Place.places())
+												{
+													at(psg) 
+													{
+														atomic { best_cost()() = up_g_local_best_cost; }
+													}	
+												}
 											}
 										}
 									}
 								}
+									
 							}
 							//Rota Parcial
 							else{
@@ -320,7 +333,7 @@ public class CSolver {
 	}
 	
 	public static def main(args:Rail[String]) {
-		val f = new File("./uk12_dist.txt");
+		val f = new File("./lau15_dist.txt");
 		val fr = new FileReader(f);
 		                            
 		var size : Int = nextInt(fr);
