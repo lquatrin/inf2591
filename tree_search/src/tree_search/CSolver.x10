@@ -333,7 +333,7 @@ public class CSolver {
 	}
 	
 	public static def main(args:Rail[String]) {
-		val f = new File("./lau15_dist.txt");
+		val f = new File("./map20_2.txt");
 		val fr = new FileReader(f);
 		                            
 		var size : Int = nextInt(fr);
