@@ -120,7 +120,32 @@ public class CSolver {
 					{
 						if(stack_tours().size() >= 2 && places_waiting_for_some_work()() && pegar_novos_places)
 						{
-							Console.OUT.println("Pode Pegar novos places " + here.id);
+							//Console.OUT.println("Pegar place " + here.id);
+
+							at(waiting_places.home)
+							{
+								var id_ret : Int;
+								atomic{
+									val size_t = waiting_places_size()() - 1;
+									if (waiting_places_size()() > 0)
+									{
+										id_ret = waiting_places()(size_t);
+										waiting_places_size()() = waiting_places_size()() - 1;
+									}
+									else
+									{
+										id_ret = -1 as Int;
+									}
+								}
+
+								if (id_ret >= 0)
+								{
+									at(Place.places()(id_ret))
+									{
+										working()() = true;
+									}
+								}
+							}
 							pegar_novos_places = false;
 							//atomic {pega quantidade de caras que estão esperando}
 							//VERIFICAR SE TEM PLACES ESPERANDO NOVOS ELEMENTOS	
@@ -228,6 +253,7 @@ public class CSolver {
 							
 							if (waiting_places_size()() == Place.numPlaces() as Long)
 							{
+								Console.OUT.println("Release Everything");
 								for (ps in Place.places()) {
 									at (ps)
 									{
