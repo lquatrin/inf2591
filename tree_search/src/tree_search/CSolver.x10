@@ -20,7 +20,11 @@ public class CSolver {
 	public static val stack_tours = PlaceLocalHandle.make[Stack[Tour]](Place.places(), ()=>new Stack[Tour]());
 	
 	public static val best_cost = PlaceLocalHandle.make[Cell[Long]](Place.places(), ()=>new Cell[Long](Long.MAX_VALUE));
-	public static val best_tour = PlaceLocalHandle.make[Tour](Place.places(), ()=>new Tour(1 as Int));
+	public static val places_waiting_for_some_work = PlaceLocalHandle.make[Cell[Boolean]](Place.places(), ()=>new Cell[Boolean](false));
+	
+	public static val working = PlaceLocalHandle.make[Cell[Boolean]](Place.places(), ()=>new Cell[Boolean](false));
+	public static val not_terminate = PlaceLocalHandle.make[Cell[Boolean]](Place.places(), ()=>new Cell[Boolean](true));
+	
 	
     public def this (sz : Int, distances : Array_2[Int])
 	{
@@ -76,12 +80,18 @@ public class CSolver {
 		val best_global_tour = new GlobalRef[Array_1[Int]](new Array_1[Int](size));
 		val best_global_cost = new GlobalRef[Cell[Long]](new Cell[Long](Long.MAX_VALUE));
 		
+		val waiting_places_size = new GlobalRef[Cell[Long]](new Cell[Long](0));
+		val waiting_places = new GlobalRef[Array_1[Int]](new Array_1[Int](size));
+			
 		for(p in Place.places())
 		{
 			at(p)
 			{
 				stack_tours().clear();
 				best_cost()(Long.MAX_VALUE);
+				places_waiting_for_some_work()(false);
+				working()(true);
+				not_terminate()(true);
 			}
 		}
 		
@@ -101,106 +111,143 @@ public class CSolver {
 					stack_tours().push(tour);
 				}
 				
-				// WHile terminate{
-				//VERIFICAR SE O PROCESSO ESTÁ ATIVO
-				
-				var local_best_cost : Long = best_cost()();
-				while(!stack_tours().isEmpty())
+				var pegar_novos_places : Boolean = true;
+				while(working()() && not_terminate()())
 				{
-					//atomic {pega quantidade de caras que estão esperando}
-					//VERIFICAR SE TEM PLACES ESPERANDO NOVOS ELEMENTOS
-					
-					
-					var curr_tour : Tour = stack_tours().pop();
-					
-					val tour_cost : Long = curr_tour.GetCurrCost();
-					
-					//Verifica custo e atualiza
-					var good_tour : Boolean = false;					
-					if (tour_cost < local_best_cost)
+								
+					var local_best_cost : Long = best_cost()();
+					while(!stack_tours().isEmpty())
 					{
-						atomic{ local_best_cost = best_cost()(); }
-						good_tour = tour_cost < local_best_cost;
-					}
-									
-					if (good_tour)
-					{
-						//Rota Completa
-						if (curr_tour.GetSize() == size as Long)
+						if(stack_tours().size() >= 2 && places_waiting_for_some_work()() && pegar_novos_places)
 						{
-							var value : Long = curr_tour.GetCurrCost();
-							
-							val List : ArrayList[Int] = curr_tour.GetList();
-							var id : Int = List((List.size() - 1)) as Int;
-							value += (dist(id, 0) as Long);
-							
-							if (value < local_best_cost)
+							Console.OUT.println("Pode Pegar novos places " + here.id);
+							pegar_novos_places = false;
+							//atomic {pega quantidade de caras que estão esperando}
+							//VERIFICAR SE TEM PLACES ESPERANDO NOVOS ELEMENTOS	
+						}
+												
+						var curr_tour : Tour = stack_tours().pop();
+						val tour_cost : Long = curr_tour.GetCurrCost();
+						
+						//Verifica custo e atualiza
+						var good_tour : Boolean = false;					
+						if (tour_cost < local_best_cost)
+						{
+							atomic{ local_best_cost = best_cost()(); }
+							good_tour = tour_cost < local_best_cost;
+						}
+										
+						if (good_tour)
+						{
+							//Rota Completa
+							if (curr_tour.GetSize() == size as Long)
 							{
-								best_cost().set(value);
-								best_tour().Copy(curr_tour);
-														
-								val up_g_local_best_cost = best_cost()();
-								at(best_global_cost.home)
+								var value : Long = curr_tour.GetCurrCost();
+								
+								val List : ArrayList[Int] = curr_tour.GetList();
+								var id : Int = List((List.size() - 1)) as Int;
+								value += (dist(id, 0) as Long);
+								
+								if (value < local_best_cost)
 								{
-									var update_if_necessary : Boolean = false;
-									atomic {
-										if (up_g_local_best_cost < best_global_cost()())
-										{
-											best_global_cost()() = up_g_local_best_cost;
-											for(t in 0..(List.size()-1) as Int)
-											{
-												best_global_tour()(t) = List(t);
-											}
-											update_if_necessary = true;
-										}
+									val up_g_local_best_cost : Long;
+									atomic{
+										best_cost().set(value);
+										up_g_local_best_cost = best_cost()();
 									}
-									if (update_if_necessary)
+									
+									at(best_global_cost.home)
 									{
-										for(psg in Place.places())
-										{
-											at(psg) 
+										var update_if_necessary : Boolean = false;
+										atomic {
+											if (up_g_local_best_cost < best_global_cost()())
 											{
-												atomic { best_cost()() = up_g_local_best_cost; }
-											}	
+												best_global_cost()() = up_g_local_best_cost;
+												for(t in 0..(List.size()-1) as Int)
+												{
+													best_global_tour()(t) = List(t);
+												}
+												update_if_necessary = true;
+											}
+										}
+										if (update_if_necessary)
+										{
+											for(psg in Place.places())
+											{
+												at(psg) 
+												{
+													atomic { best_cost()() = up_g_local_best_cost; }
+												}	
+											}
 										}
 									}
 								}
 							}
-						}
-						//Rota Parcial
-						else{
-							for (var i:Int = (size-1) as Int; i > 0 as Int; i= i - 1 as Int){
-								if (Feasible(curr_tour, i as Int))
-								{		
-									curr_tour.AddNode(i);
-									curr_tour.SetNodeVisited(i);
-																																			
-									var s_2 : Int = curr_tour.GetCityNode((curr_tour.GetSize() - 2) as Int);
-
-									var m_array:ArrayList[Int] = curr_tour.GetList().clone();
-
-									var newtour:Tour = new Tour(m_array,size);
-									newtour.SetCurrCost(
-											curr_tour.GetCurrCost() + 
-											dist(s_2, i)
-									);
-									
-									stack_tours().push(newtour);
-									
-									curr_tour.SetNodeUnvisited(i);
-									curr_tour.RemoveNode();
+							//Rota Parcial
+							else{
+								for (var i:Int = (size-1) as Int; i > 0 as Int; i= i - 1 as Int){
+									if (Feasible(curr_tour, i as Int))
+									{		
+										curr_tour.AddNode(i);
+										curr_tour.SetNodeVisited(i);
+																																				
+										var s_2 : Int = curr_tour.GetCityNode((curr_tour.GetSize() - 2) as Int);
+	
+										var m_array:ArrayList[Int] = curr_tour.GetList().clone();
+	
+										var newtour:Tour = new Tour(m_array,size);
+										newtour.SetCurrCost(
+												curr_tour.GetCurrCost() + 
+												dist(s_2, i)
+										);
+										
+										stack_tours().push(newtour);
+										
+										curr_tour.SetNodeUnvisited(i);
+										curr_tour.RemoveNode();
+									}
 								}
 							}
 						}
+	
 					}
-
-				}
-				
-				//DIZER QUE ESTÁ ESPERANDO NOVOS PROCESSOS
-				//para cada place atomic {Aumenta a quantidade de caras vazios}
-				
-				// WHile terminate}
-				
+					
+					if(stack_tours().isEmpty())
+					{
+						Console.OUT.println("Stop " + here.id);
+						working()() = false;
+						
+						val my_place = here.id;
+						at(waiting_places.home)
+						{
+							atomic{
+								val id = waiting_places_size()();
+								waiting_places()(id as Int) = my_place as Int;
+								waiting_places_size()() = waiting_places_size()() + 1;
+							}
+							
+							if (waiting_places_size()() == Place.numPlaces() as Long)
+							{
+								for (ps in Place.places()) {
+									at (ps)
+									{
+										not_terminate()() = false;
+										working()() = true;
+									}
+								}
+							}
+						}
+						
+						for (ps in Place.places()) {
+							at (ps)
+							{
+								atomic { places_waiting_for_some_work()() = true; }
+							}
+						}
+						
+						when(working()());					
+					}
+				}				
 			}
 		}
 				
