@@ -157,7 +157,7 @@ public class CSolver {
 								{
 									aux_stack.push(stack_tours().pop());
 								}														
-								
+								//Console.Out.Println(aux_stack + " " + stack_tours());
 								at(Place.places()(places_waiting_id()()))
 								{
 									var stack_size_l : Int = aux_stack.size() as Int;
