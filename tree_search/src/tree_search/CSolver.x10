@@ -212,7 +212,7 @@ public class CSolver {
 									
 									if (need_global_update)
 									{
-										at(best_global_cost.home)
+										async at(best_global_cost.home)
 										{
 											var update_if_necessary : Boolean = false;
 											atomic {
@@ -333,7 +333,7 @@ public class CSolver {
 	}
 	
 	public static def main(args:Rail[String]) {
-		val f = new File("./map20_2.txt");
+		val f = new File("./uk12_dist.txt");
 		val fr = new FileReader(f);
 		                            
 		var size : Int = nextInt(fr);
