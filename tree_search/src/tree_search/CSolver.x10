@@ -113,16 +113,13 @@ public class CSolver {
 					stack_tours().push(tour);
 				}
 				
-				var pegar_novos_places : Boolean = true;
 				while(working()() && not_terminate()())
-				{
-								
+				{		
 					var local_best_cost : Long = best_cost()();
 					while(!stack_tours().isEmpty())
 					{
-						if(stack_tours().size() >= 2 && places_waiting_for_some_work()() && pegar_novos_places)
+						if(stack_tours().size() >= 2 && places_waiting_for_some_work()())
 						{
-							//Console.OUT.println("Pegar place " + here.id);
 							val ma_place = here.id;
 							at(waiting_places.home)
 							{
@@ -144,20 +141,34 @@ public class CSolver {
 								at(Place.places()(ma_place))
 								{
 									places_waiting_id()() = id_to;
+									if (id_to < 0)
+									{
+										//Não achei nenhum, não tem nenhum cara querendo trabalhar!
+										places_waiting_for_some_work()() = false;
+									}
 								}
 							}
 							
 							if (places_waiting_id()() >= 0)
 							{
+							    val aux_stack : Stack[Tour] = new Stack[Tour]();
+								var half_size : Int = (stack_tours().size()/2) as Int;
+							    for(st in 0..(half_size - 1))
+								{
+									aux_stack.push(stack_tours().pop());
+								}														
+								
 								at(Place.places()(places_waiting_id()()))
 								{
+									var stack_size_l : Int = aux_stack.size() as Int;
+									for(st in 0..(stack_size_l - 1))
+									{
+										stack_tours().push(aux_stack.pop());
+									}			
+									
 									working()() = true;
 								}
 							}
-							
-							pegar_novos_places = false;
-							//atomic {pega quantidade de caras que estão esperando}
-							//VERIFICAR SE TEM PLACES ESPERANDO NOVOS ELEMENTOS	
 						}
 												
 						var curr_tour : Tour = stack_tours().pop();
@@ -248,7 +259,7 @@ public class CSolver {
 					
 					if(stack_tours().isEmpty())
 					{
-						Console.OUT.println("Stop " + here.id);
+						//Console.OUT.println("Stop " + here.id);
 						working()() = false;
 						
 						val my_place = here.id;
@@ -262,7 +273,7 @@ public class CSolver {
 							
 							if (waiting_places_size()() == Place.numPlaces() as Long)
 							{
-								Console.OUT.println("Release Everything");
+								//Console.OUT.println("Release Everything");
 								for (ps in Place.places()) {
 									at (ps)
 									{
