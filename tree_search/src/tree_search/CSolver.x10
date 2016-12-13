@@ -21,6 +21,7 @@ public class CSolver {
 	
 	public static val best_cost = PlaceLocalHandle.make[Cell[Long]](Place.places(), ()=>new Cell[Long](Long.MAX_VALUE));
 	public static val places_waiting_for_some_work = PlaceLocalHandle.make[Cell[Boolean]](Place.places(), ()=>new Cell[Boolean](false));
+	public static val places_waiting_id = PlaceLocalHandle.make[Cell[Long]](Place.places(), ()=>new Cell[Long](-1));
 	
 	public static val working = PlaceLocalHandle.make[Cell[Boolean]](Place.places(), ()=>new Cell[Boolean](false));
 	public static val not_terminate = PlaceLocalHandle.make[Cell[Boolean]](Place.places(), ()=>new Cell[Boolean](true));
@@ -90,6 +91,7 @@ public class CSolver {
 				stack_tours().clear();
 				best_cost()(Long.MAX_VALUE);
 				places_waiting_for_some_work()(false);
+				places_waiting_id()(-1);
 				working()(true);
 				not_terminate()(true);
 			}
@@ -121,7 +123,7 @@ public class CSolver {
 						if(stack_tours().size() >= 2 && places_waiting_for_some_work()() && pegar_novos_places)
 						{
 							//Console.OUT.println("Pegar place " + here.id);
-
+							val ma_place = here.id;
 							at(waiting_places.home)
 							{
 								var id_ret : Int;
@@ -138,14 +140,21 @@ public class CSolver {
 									}
 								}
 
-								if (id_ret >= 0)
+								val id_to = id_ret;
+								at(Place.places()(ma_place))
 								{
-									at(Place.places()(id_ret))
-									{
-										working()() = true;
-									}
+									places_waiting_id()() = id_to;
 								}
 							}
+							
+							if (places_waiting_id()() >= 0)
+							{
+								at(Place.places()(places_waiting_id()()))
+								{
+									working()() = true;
+								}
+							}
+							
 							pegar_novos_places = false;
 							//atomic {pega quantidade de caras que estão esperando}
 							//VERIFICAR SE TEM PLACES ESPERANDO NOVOS ELEMENTOS	
